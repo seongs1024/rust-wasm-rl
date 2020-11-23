@@ -1,110 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>RL Playground with rust-wasm</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            height: 100vh;
-            margin: 0;
-            font-family: Arial;
-            background-color: #EEE;
-            overflow: hidden;
-        }
-        body > div:first-child {
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            width: 100vw;
-            height: 10vh;
-            top: 0;
-            padding-left: 1.5em;
-            color: #DDD;
-            box-shadow: 0 0 3px 2px rgba(0,0,0,0.3);
-            background: #654FF0;
-            background: -webkit-linear-gradient(left, #654FF0, #8464f8);
-            background: -o-linear-gradient(right, #654FF0, #8464f8);
-            background: -moz-linear-gradient(right, #654FF0, #8464f8);
-            background: linear-gradient(to right, #654FF0, #8464f8);
-        }
-        body > div:first-child > div:first-child {
-            font-size: 18pt;
-            color: white;
-            font-weight: bolder;
-        }
-        #content {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 90vh;
-            width: 100vw;
-        }
-        #content > div {
-            box-shadow: 0 0 3px 2px rgba(0,0,0,0.1), 0 3px 5px 1px rgba(0,0,0,0.1);
-            background-color: white;
-        }
-        #content > div > div:first-child {
-            display: flex;
-        }
-        canvas {
-            border: 1px solid #999;
-        }
-        #digits {
-            margin: 5px;
-        }
-        #digits > div {
-            display: flex;
-            align-content: center;
-            margin: 1px;
-        }
-        #digits > div > div:first-child {
-            padding-right: 3px;
-        }
-        #digits > div > div:last-child {
-            border: 1px solid black;
-            width: 100px;
-        }
-        .bar {
-            height: 100%;
-            width: 1px;
-            background-color: #0b9b18;
-            transform-origin: left;
-        }
-        #clearButton {
-            padding: 20px;
-            font-size: 20pt;
-        }
-        #inout {
-            display: flex;
-            align-items: center;
-        }
-        #output {
-            text-align: center;
-            flex-grow: 1;
-            font-size: 18pt;
-        }
-        button {
-            cursor: pointer;
-        }
-        a {
-            color: white;
-        }
-        @media screen and (min-width: 1000px) {
-            #output {
-                font-size: 26pt;
-            }
-        }
-    </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>RL Playground with rust-wasm</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <style>
+    html {
+      touch-action: manipulation;
+    }
+    body {
+      height: 100vh;
+      margin: 0;
+      font-family: Arial;
+      background-color: #101010;
+      overflow: hidden;
+    }
+    body > div:first-child {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      width: 100vw;
+      height: 10vh;
+      top: 0;
+      padding-left: 1.5em;
+      color: #ABBBBA;
+      box-shadow: 0 0 3px 2px rgba(0,0,0,0.3);
+      background: #654FF0;
+      background: -webkit-linear-gradient(left, #654FF0, #8464f8);
+      background: -o-linear-gradient(right, #654FF0, #8464f8);
+      background: -moz-linear-gradient(right, #654FF0, #8464f8);
+      background: linear-gradient(to right, #654FF0, #8464f8);
+    }
+  </style>
 </head>
 <body>
-    <div>
-        <div>Reinforcement learning playground with Rust and WebAssembly</div>
-        <div>Test algorithms that you've learned - <a href="https://github.com/seongs1024">Seongs</a> -</div>
+  <div>
+    <div style="font-size: 18pt; font-weight: bolder; color: white;">
+      Reinforcement learning playground with Rust and WebAssembly
     </div>
     <div>
-        <div>
-        </div>
+      Test algorithms that you've learned 
+      - <a style="color: white" href="https://github.com/seongs1024">Seongs</a> -
     </div>
+  </div>
+  <div>
+    <canvas id="the_canvas_id"></canvas>
+    <script type="module">
+      import init, { start } from './pkg/rust_wasm_rl.js';
+      async function run() {
+        await init();
+        start("the_canvas_id");
+      }
+      run();
+    </script>
+  </div>
 </body>
 </html>

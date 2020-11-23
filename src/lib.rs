@@ -1,19 +1,10 @@
-mod utils;
-
 use wasm_bindgen::prelude::*;
 
-// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
-// allocator.
-#[cfg(feature = "wee_alloc")]
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
 #[wasm_bindgen]
-extern {
-    fn alert(s: &str);
-}
-
-#[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, rust-wasm-rl!");
+pub fn start(canvas_id: &str) -> Result<(), wasm_bindgen::JsValue> {
+    let app = egui::DemoApp::default();
+    let backend = egui_web::WebBackend::new(canvas_id)?;
+    let runner = egui_web::AppRunner::new(backend, Box::new(app))?;
+    egui_web::start(runner)?;
+    Ok(())
 }
