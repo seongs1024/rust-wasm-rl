@@ -16,8 +16,8 @@ pub fn start(canvas_id: &str) -> Result<(), wasm_bindgen::JsValue> {
 
 #[derive(Default)]
 struct WebApp {
-    name: String,
-    age: u32,
+    num_columns: usize,
+    current_value: u32,
 }
 
 impl app::App for WebApp {
@@ -42,17 +42,30 @@ impl app::App for WebApp {
 
             ui.heading("Windows:");
         });
+
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading("My Egui Application");
+            ui.heading("Random BaRo31");
+
+            let mut player_input = 0;
+
             ui.horizontal(|ui| {
-                ui.label("Your name: ");
-                ui.text_edit(&mut self.name);
+                ui.label("Your turn: ");
+                if ui.button("1").clicked {
+                    player_input = 1;
+                }
+                if ui.button("2").clicked {
+                    player_input = 2;
+                }
+                if ui.button("3").clicked {
+                    player_input = 3;
+                }
             });
-            ui.add(egui::Slider::u32(&mut self.age, 0..=120).text("age"));
-            if ui.button("Click each year").clicked {
-                self.age += 1;
-            }
-            ui.label(format!("Hello '{}', age {}", self.name, self.age));
+            self.num_columns += player_input;
+            ui.columns(self.num_columns, |cols| {
+                for (i, col) in cols.iter_mut().enumerate() {
+                    col.label(format!("{}", i));
+                }
+            });
         });
     }
 }
