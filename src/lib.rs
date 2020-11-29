@@ -6,7 +6,7 @@ use std::{
 
 use wasm_bindgen::prelude::*;
 
-use egui::{app, Context, Id, Label, color::srgba};
+use egui::{app, Context, Id, Label, color::srgba, Button};
 
 #[wasm_bindgen]
 pub fn start(canvas_id: &str) -> Result<(), wasm_bindgen::JsValue> {
@@ -66,15 +66,15 @@ impl app::App for WebApp {
 
             ui.horizontal(|ui| {
                 ui.label(format!("Player {}'s turn: ", self.current_player));
-                if ui.button("1").clicked {
+                if ui.add(Button::new("1").enabled(self.total_count() + 1 <= 31 )).clicked {
                     self.stack_turn(self.current_player, Count::Strike);
                     self.end_turn();
                 }
-                if ui.button("2").clicked {
+                if ui.add(Button::new("2").enabled(self.total_count() + 2 <= 31 )).clicked {
                     self.stack_turn(self.current_player, Count::Doubble);
                     self.end_turn();
                 }
-                if ui.button("3").clicked {
+                if ui.add(Button::new("3").enabled(self.total_count() + 3 <= 31 )).clicked {
                     self.stack_turn(self.current_player, Count::Turkey);
                     self.end_turn();
                 }
