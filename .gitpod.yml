@@ -1,0 +1,6 @@
+image:
+  file: .gitpod.Dockerfile
+
+tasks:
+  - init: wasm-pack build --target web
+    # command: cargo watch -x run
