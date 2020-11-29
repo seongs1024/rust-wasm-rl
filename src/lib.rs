@@ -1,8 +1,11 @@
-use std::sync::Arc;
+use std::{
+    sync::Arc,
+    collections::LinkedList
+};
 
 use wasm_bindgen::prelude::*;
 
-use egui::{app, Context, Id};
+use egui::{app, Context, Id, Label, color::srgba};
 
 #[wasm_bindgen]
 pub fn start(canvas_id: &str) -> Result<(), wasm_bindgen::JsValue> {
@@ -14,11 +17,21 @@ pub fn start(canvas_id: &str) -> Result<(), wasm_bindgen::JsValue> {
     Ok(())
 }
 
-#[derive(Default)]
 struct WebApp {
-    num_columns: usize,
-    current_value: u32,
+    num_players: usize,
+    current_player: Player,
+    turns: LinkedList<Turn>,
 }
+
+type Player = usize;
+
+enum Count {
+    Strike,
+    Doubble,
+    Turkey,
+}
+
+type Turn = (Player, Count);
 
 impl app::App for WebApp {
     fn ui(
@@ -46,26 +59,74 @@ impl app::App for WebApp {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Random BaRo31");
 
-            let mut player_input = 0;
-
             ui.horizontal(|ui| {
                 ui.label("Your turn: ");
                 if ui.button("1").clicked {
-                    player_input = 1;
+                    self.stack_turn(self.current_player, Count::Strike);
                 }
                 if ui.button("2").clicked {
-                    player_input = 2;
+                    self.stack_turn(self.current_player, Count::Doubble);
                 }
                 if ui.button("3").clicked {
-                    player_input = 3;
+                    self.stack_turn(self.current_player, Count::Turkey);
                 }
+                self.end_turn();
             });
-            self.num_columns += player_input;
-            ui.columns(self.num_columns, |cols| {
+
+            /* ui.columns(self.total_count(), |cols| {
+                self.turns.iter()
+                    .for_each(|(player, count)| {
+                        for c in (0..c_to_i(count).iter() {
+                            if i % 2 == 0 { 
+                               col.add(Label::new(format!("{}", i)).text_color(srgba(110, 255, 110, 255)));
+                           }
+                           else {
+                               col.add(Label::new(format!("{}", i)).text_color(srgba(128, 140, 255, 255)));
+                           }
+                        }
+                    })
                 for (i, col) in cols.iter_mut().enumerate() {
-                    col.label(format!("{}", i));
-                }
+               }
+            }); */
+            ui.horizontal(|ui| {
+                ui.style_mut().spacing.item_spacing.x = 0.0;
+                ui.add(Label::new("Text can have ").text_color(srgba(110, 255, 110, 255)));
+                ui.add(Label::new("color ").text_color(srgba(128, 140, 255, 255)));
+                ui.add(Label::new("and tooltips.")).on_hover_text("This is a the third.", );
             });
         });
+    }
+}
+
+impl Default for WebApp {
+    fn default() -> Self {
+        Self {
+            num_players: 2,
+            current_player: 0 as Player,
+            turns: LinkedList::new(),
+        }
+    }
+}
+
+fn c_to_i(count: &Count) -> usize {
+    match count {
+        Count::Strike => 1,
+        Count::Doubble => 2,
+        Count::Turkey => 3,
+    }
+}
+
+impl WebApp {
+    pub fn stack_turn(&mut self, player: Player, count: Count) {
+        self.turns.push_back((player, count));
+    }
+
+    pub fn end_turn(&mut self) {
+        self.current_player = (self.current_player + 1) / self.num_players;
+    }
+
+    pub fn total_count(&self) -> usize {
+       self.turns.iter()
+            .fold(0, |acc, (_, count)| acc + c_to_i(count) )
     }
 }
