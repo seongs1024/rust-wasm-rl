@@ -1,6 +1,7 @@
 use std::{
     sync::Arc,
-    collections::LinkedList
+    collections::{LinkedList},
+    vec::Vec
 };
 
 use wasm_bindgen::prelude::*;
@@ -60,40 +61,48 @@ impl app::App for WebApp {
             ui.heading("Random BaRo31");
 
             ui.horizontal(|ui| {
-                ui.label("Your turn: ");
+                ui.label(format!("{} Players are up!", self.num_players));
+            });
+
+            ui.horizontal(|ui| {
+                ui.label(format!("Player {}'s turn: ", self.current_player));
                 if ui.button("1").clicked {
                     self.stack_turn(self.current_player, Count::Strike);
+                    self.end_turn();
                 }
                 if ui.button("2").clicked {
                     self.stack_turn(self.current_player, Count::Doubble);
+                    self.end_turn();
                 }
                 if ui.button("3").clicked {
                     self.stack_turn(self.current_player, Count::Turkey);
+                    self.end_turn();
                 }
-                self.end_turn();
             });
 
-            /* ui.columns(self.total_count(), |cols| {
-                self.turns.iter()
-                    .for_each(|(player, count)| {
-                        for c in (0..c_to_i(count).iter() {
-                            if i % 2 == 0 { 
-                               col.add(Label::new(format!("{}", i)).text_color(srgba(110, 255, 110, 255)));
-                           }
-                           else {
-                               col.add(Label::new(format!("{}", i)).text_color(srgba(128, 140, 255, 255)));
-                           }
+            ui.columns(self.total_count(), |cols| {
+                let mut acc_count = 0;
+                let list: Vec<(&Player, usize)> = self.turns.iter()
+                    .flat_map(|(player, count)| {
+                        let mut v = Vec::new();
+                        for c in 0..c_to_i(count) {
+                            acc_count += 1;
+                            v.push((player, acc_count));
                         }
+                        v
                     })
-                for (i, col) in cols.iter_mut().enumerate() {
-               }
-            }); */
-            ui.horizontal(|ui| {
-                ui.style_mut().spacing.item_spacing.x = 0.0;
-                ui.add(Label::new("Text can have ").text_color(srgba(110, 255, 110, 255)));
-                ui.add(Label::new("color ").text_color(srgba(128, 140, 255, 255)));
-                ui.add(Label::new("and tooltips.")).on_hover_text("This is a the third.", );
+                    .collect();
+                cols.iter_mut().zip(list.iter())
+                    .for_each(|(col, &(p, i))| {
+                        if *p % 2 == 0 {
+                            col.add(Label::new(format!("{}", i)).text_color(srgba(110, 255, 110, 255)));
+                        }
+                        else {
+                            col.add(Label::new(format!("{}", i)).text_color(srgba(128, 140, 255, 255)));
+                        }
+                    });
             });
+
         });
     }
 }
@@ -122,7 +131,7 @@ impl WebApp {
     }
 
     pub fn end_turn(&mut self) {
-        self.current_player = (self.current_player + 1) / self.num_players;
+        self.current_player = (self.current_player + 1) % self.num_players;
     }
 
     pub fn total_count(&self) -> usize {
